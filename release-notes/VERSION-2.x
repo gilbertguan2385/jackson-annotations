@@ -11,6 +11,10 @@ NOTE: Annotations module will never contain changes in patch versions,
 === Releases ===
 ------------------------------------------------------------------------
 
+2.18.5 (not yet released)
+
+- No functional changes, but released via Sonatype Central Portal
+
 2.18.0 (26-Sep-2024)
 
 No changes since 2.17
