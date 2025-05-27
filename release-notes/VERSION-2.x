@@ -11,6 +11,10 @@ NOTE: Annotations module will never contain changes in patch versions,
 === Releases ===
 ------------------------------------------------------------------------
 
+2.19.1 (not yet released)
+
+- No functional changes, but released via Sonatype Central Portal
+
 2.19.0 (24-Apr-2025)
 
 #280: Minor change to `module-info.java`: use "open module"
