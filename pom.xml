@@ -65,10 +65,11 @@
   <!-- Alas, need to include snapshot reference since otherwise can not find
        snapshot of parent... -->
   <repositories>
+    <!-- 26-May-2025, tatu: Using Sonatype Central Portal, will need this -->
     <repository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>central-snapshots</id>
+      <name>Sonatype Central Portal (snapshots)</name>
+      <url>https://central.sonatype.com/repository/maven-snapshots</url>
       <releases><enabled>false</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
@@ -113,19 +114,10 @@
         </executions>
       </plugin>
 
-      <!-- 08-Nov-2019, tatu: Copied from
-           https://github.com/stephenc/git-timestamp-maven-plugin/blob/master/pom.xml#L327-L337
-         -->
+      <!-- 26-May-2025: Enable Sonatype Central Portal publishing -->
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.14</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>sonatype-nexus-staging</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <stagingProfileId>b34f19b9cc6224</stagingProfileId>
-        </configuration>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
       </plugin>
 
       <!-- 20-Oct-2020, tatu: [annotations#178] copy full LICENSE from main dir
