@@ -341,7 +341,7 @@ public @interface JsonTypeInfo
      * @deprecated Since 2.5, use any Annotation type (such as {@link JsonTypeInfo}),
      *    if such behavior is needed; this is rarely necessary.
      */
-    @Deprecated
+    @Deprecated // since 2.5
     public abstract static class None {}
 
     /**
