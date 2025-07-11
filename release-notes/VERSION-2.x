@@ -11,6 +11,11 @@ NOTE: Annotations module will never contain changes in patch versions,
 === Releases ===
 ------------------------------------------------------------------------
 
+2.19.2 (not yet released)
+
+- Minor forwards-compatibility changes (to support upcoming Jackson 3.0)
+ (only mentioned wrt binary-compability checking tools)
+
 2.19.1 (13-Jun-2025)
 
 - No functional changes, but released via Sonatype Central Portal
