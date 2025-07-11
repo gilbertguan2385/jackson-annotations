@@ -31,14 +31,11 @@ public @interface JacksonInject
      * if disabled (`OptBoolean.FALSE`), input value (if any) will be ignored;
      * otherwise it will override injected value.
      *<p>
-     * Default is `OptBoolean.DEFAULT`, which translates to `OptBoolean.TRUE`: this is
-     * for backwards compatibility (2.8 and earlier always allow binding input value).
+     * Default is `OptBoolean.DEFAULT`, which translates to `OptBoolean.TRUE`.
      *
      * @return {@link OptBoolean#TRUE} to enable use of value from input instead of
      *    injected value, if available; {@link OptBoolean#FALSE} if injected value will
      *    always be used regardless of input.
-     *
-     * @since 2.9
      */
     public OptBoolean useInput() default OptBoolean.DEFAULT;
 
@@ -53,25 +50,25 @@ public @interface JacksonInject
      * @return {@link OptBoolean#FALSE} to throw an exception; {@link OptBoolean#TRUE}
      * to avoid throwing it; or {@link OptBoolean#DEFAULT} to use configure defaults
      * (which are same as {@link OptBoolean#FALSE} for Jackson 2.x)
+<<<<<<< HEAD
      *
      * @since 2.20
+=======
+>>>>>>> 2.19
      */
     public OptBoolean optional() default OptBoolean.DEFAULT;
 
     /*
-    /**********************************************************
-    /* Value class used to enclose information, allow for
-    /* merging of layered configuration settings, and eventually
-    /* decouple higher level handling from Annotation types
-    /* (which can not be implemented etc.)
-    /**********************************************************
+    /**********************************************************************
+    /* Value class used to enclose information, allow for  merging of layered
+    /* configuration settings, and eventually decouple higher level handling
+    /* from Annotation types (which can not be implemented etc.)
+    /**********************************************************************
      */
 
     /**
      * Helper class used to contain information from a single {@link JacksonInject}
      * annotation, as well as to provide possible overrides from non-annotation sources.
-     *
-     * @since 2.9
      */
     public static class Value
         implements JacksonAnnotationValue<JacksonInject>,
@@ -103,15 +100,16 @@ public @interface JacksonInject
         }
 
         /*
-        /**********************************************************
+        /******************************************************************
         /* Factory methods
-        /**********************************************************
+        /******************************************************************
          */
 
         public static Value empty() {
             return EMPTY;
         }
 
+<<<<<<< HEAD
         @Deprecated //since 2.20
         public static Value construct(Object id, Boolean useInput) {
             return construct(id, useInput, null);
@@ -120,6 +118,8 @@ public @interface JacksonInject
         /**
          * @since 2.20
          */
+=======
+>>>>>>> 2.19
         public static Value construct(Object id, Boolean useInput, Boolean optional) {
             if ("".equals(id)) {
                 id = null;
@@ -142,9 +142,9 @@ public @interface JacksonInject
         }
 
         /*
-        /**********************************************************
+        /******************************************************************
         /* Mutant factory methods
-        /**********************************************************
+        /******************************************************************
          */
 
         public Value withId(Object id) {
@@ -181,9 +181,9 @@ public @interface JacksonInject
         }
 
         /*
-        /**********************************************************
+        /******************************************************************
         /* Accessors
-        /**********************************************************
+        /******************************************************************
          */
 
         public Object getId() { return _id; }
@@ -199,9 +199,9 @@ public @interface JacksonInject
         }
 
         /*
-        /**********************************************************
-        /* Std method overrides
-        /**********************************************************
+        /******************************************************************
+        /* Standard method overrides
+        /******************************************************************
          */
 
         @Override
@@ -243,9 +243,9 @@ public @interface JacksonInject
         }
 
         /*
-        /**********************************************************
+        /******************************************************************
         /* Other
-        /**********************************************************
+        /******************************************************************
          */
 
         private static boolean _empty(Object id, Boolean useInput, Boolean optional) {
