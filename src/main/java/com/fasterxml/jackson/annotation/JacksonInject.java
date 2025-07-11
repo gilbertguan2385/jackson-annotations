@@ -50,11 +50,8 @@ public @interface JacksonInject
      * @return {@link OptBoolean#FALSE} to throw an exception; {@link OptBoolean#TRUE}
      * to avoid throwing it; or {@link OptBoolean#DEFAULT} to use configure defaults
      * (which are same as {@link OptBoolean#FALSE} for Jackson 2.x)
-<<<<<<< HEAD
      *
      * @since 2.20
-=======
->>>>>>> 2.19
      */
     public OptBoolean optional() default OptBoolean.DEFAULT;
 
@@ -109,7 +106,6 @@ public @interface JacksonInject
             return EMPTY;
         }
 
-<<<<<<< HEAD
         @Deprecated //since 2.20
         public static Value construct(Object id, Boolean useInput) {
             return construct(id, useInput, null);
@@ -118,8 +114,6 @@ public @interface JacksonInject
         /**
          * @since 2.20
          */
-=======
->>>>>>> 2.19
         public static Value construct(Object id, Boolean useInput, Boolean optional) {
             if ("".equals(id)) {
                 id = null;
