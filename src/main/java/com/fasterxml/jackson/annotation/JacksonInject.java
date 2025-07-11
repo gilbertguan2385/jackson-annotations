@@ -104,6 +104,14 @@ public @interface JacksonInject
             return EMPTY;
         }
 
+        @Deprecated //since 2.20
+        public static Value construct(Object id, Boolean useInput) {
+            return construct(id, useInput, null);
+        }
+
+        /**
+         * @since 2.20
+         */        
         public static Value construct(Object id, Boolean useInput, Boolean optional) {
             if ("".equals(id)) {
                 id = null;
