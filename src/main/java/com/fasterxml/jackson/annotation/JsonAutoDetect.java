@@ -252,7 +252,7 @@ public @interface JsonAutoDetect
             return construct(fields, getters, isGetters, setters, creators, scalarCtors);
         }
 
-        //@Deprecated // since 2.20
+        @Deprecated // since 2.20
         public static Value construct(Visibility fields,
                 Visibility getters, Visibility isGetters, Visibility setters,
                 Visibility creators)
