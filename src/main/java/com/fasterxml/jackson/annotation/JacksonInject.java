@@ -29,10 +29,10 @@ public @interface JacksonInject
 
     /**
      * Whether matching value from input (if any) is used for annotated property or not;
-     * if disabled (`OptBoolean.FALSE`), input value (if any) will be ignored;
+     * if disabled ({@code OptBoolean.FALSE}), input value (if any) will be ignored;
      * otherwise it will override injected value.
      *<p>
-     * Default is `OptBoolean.DEFAULT`, which translates to `OptBoolean.TRUE`.
+     * Default is {@code OptBoolean.DEFAULT}, which translates to {@code OptBoolean.TRUE}.
      *
      * @return {@link OptBoolean#TRUE} to enable use of value from input instead of
      *    injected value, if available; {@link OptBoolean#FALSE} if injected value will
