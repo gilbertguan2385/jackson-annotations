@@ -14,14 +14,13 @@ NOTE: Jackson 3.x components rely on 2.x annotations; there are no separate
 === Releases ===
 ------------------------------------------------------------------------
 
-- Use `Objects.equals()` for comparison (with Java 8 baseline)
-
-2.20-rc1 (04-Aug-2025)
+2.20 (28-Aug-2025)
 
 #293: Improve duplicate Id with different associated object error message
  (requested by @moutyque)
 #294: Drop patch number from version for 2.20 and later (no more 2.20.0)
 #296: Drop Java 6 compatibility for 2.20 (Java 8 baseline)
+- Use `Objects.equals()` for comparison (with Java 8 baseline)
 - Dropped Gradle BOM alignment configuration (as 2.20+ will be used by Jackson 3.x)
 
 2.19.2 (18-Jul-2025)
