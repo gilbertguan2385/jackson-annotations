@@ -48,6 +48,9 @@ public enum MyEnum {
  * Starting with Jackson 2.12 it is also possible to specify {@code namespace}
  * of property: this property is only used by certain format backends (most
  * notably XML).
+ *<p>
+ * NOTE: if a exclusion marker like {@link JsonIgnore} is also present,
+ * property accessor is excluded; ignoral has higher precedence over inclusion.
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
