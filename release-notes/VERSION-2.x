@@ -14,6 +14,10 @@ NOTE: Jackson 3.x components rely on 2.x annotations; there are no separate
 === Releases ===
 ------------------------------------------------------------------------
 
+2.21 (not yet released)
+
+No changes since 2.20
+
 2.20 (28-Aug-2025)
 
 #293: Improve duplicate Id with different associated object error message
