@@ -20,6 +20,8 @@ NOTE: Jackson 3.x components rely on 2.x annotations; there are no separate
  (contributed by @runeflobakk)
 #316: Make `JsonFormat.Features` java.io.Serializable
  (requested by @tiger9800)
+#320: Add `radix` property to `@JsonFormat` annotation
+ (contributed by @tiger9800)
 
 2.20 (28-Aug-2025)
 
