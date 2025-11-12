@@ -46,6 +46,8 @@ import java.util.TimeZone;
  *    This is useful to prevent large numeric values from being rounded to their closest double
  *    values when deserialized by JSON parsers (for instance <code>JSON.parse()</code> in web
  *    browsers) that do not support numbers with more than 53 bits of precision.
+ *    When serializing {@link java.lang.Number} to a string, it is possible to specify radix,
+ *    the numeric base used to output the number in.
  *    <p>
  *    They can also be serialized to full objects if {@link Shape#OBJECT} is used.
  *    Otherwise, the default behavior of serializing to a scalar number value will be preferred.
@@ -77,6 +79,13 @@ public @interface JsonFormat
      * default, usually UTC, but may be changed on <code>ObjectMapper</code>.
      */
     public final static String DEFAULT_TIMEZONE = "##default";
+
+    /**
+     * This is a marker signaling that a configured default radix should be used, which typically means 10,
+     * when serializing {@link java.lang.Number} properties with {@link Shape#STRING}.
+     * @since 2.21
+     */
+    public final static int DEFAULT_RADIX = -1;
 
     /**
      * Datatype-specific additional piece of configuration that may be used
@@ -125,6 +134,16 @@ public @interface JsonFormat
      * @since 2.9
      */
     public OptBoolean lenient() default OptBoolean.DEFAULT;
+
+    /**
+     * Property that indicates the numeric base used to output {@link java.lang.Number} properties when {@link Shape#STRING}
+     * is specified.
+     * For example, if 2 is used, then the output will be a binary representation of a number as a string,
+     * and with 16, the number will be outputted in the hexadecimal form.
+     *
+     * @since 2.21
+     */
+    public int radix() default DEFAULT_RADIX;
 
     /**
      * Set of {@link JsonFormat.Feature}s to explicitly enable with respect
@@ -518,21 +537,41 @@ public @interface JsonFormat
          */
         private final Features _features;
 
+        /**
+         * @since 2.21
+         */
+        private final int _radix;
+
         // lazily constructed when created from annotations
         private transient TimeZone _timezone;
 
         public Value() {
-            this("", Shape.ANY, "", "", Features.empty(), null);
+            this("", Shape.ANY, "", "", Features.empty(), null, DEFAULT_RADIX);
         }
 
         public Value(JsonFormat ann) {
             this(ann.pattern(), ann.shape(), ann.locale(), ann.timezone(),
-                    Features.construct(ann), ann.lenient().asBoolean());
+                    Features.construct(ann), ann.lenient().asBoolean(), ann.radix());
+        }
+
+        /**
+         * @since 2.21
+         */
+        public Value(String p, Shape sh, String localeStr, String tzStr, Features f,
+                Boolean lenient, int radix)
+        {
+            this(p, sh,
+                    (localeStr == null || localeStr.length() == 0 || DEFAULT_LOCALE.equals(localeStr)) ?
+                            null : new Locale(localeStr),
+                    (tzStr == null || tzStr.length() == 0 || DEFAULT_TIMEZONE.equals(tzStr)) ?
+                            null : tzStr,
+                    null, f, lenient, radix);
         }
 
         /**
          * @since 2.9
          */
+        @Deprecated //since 2.21
         public Value(String p, Shape sh, String localeStr, String tzStr, Features f,
                 Boolean lenient)
         {
@@ -545,8 +584,25 @@ public @interface JsonFormat
         }
 
         /**
+         * @since 2.21
+         */
+        public Value(String p, Shape sh, Locale l, TimeZone tz, Features f,
+                Boolean lenient, int radix)
+        {
+            _pattern = (p == null) ? "" : p;
+            _shape = (sh == null) ? Shape.ANY : sh;
+            _locale = l;
+            _timezone = tz;
+            _timezoneStr = null;
+            _features = (f == null) ? Features.empty() : f;
+            _lenient = lenient;
+            _radix = radix;
+        }
+
+        /**
          * @since 2.9
          */
+        @Deprecated //since 2.21
         public Value(String p, Shape sh, Locale l, TimeZone tz, Features f,
                 Boolean lenient)
         {
@@ -557,13 +613,14 @@ public @interface JsonFormat
             _timezoneStr = null;
             _features = (f == null) ? Features.empty() : f;
             _lenient = lenient;
+            _radix = DEFAULT_RADIX;
         }
 
         /**
-         * @since 2.9
+         * @since 2.21
          */
         public Value(String p, Shape sh, Locale l, String tzStr, TimeZone tz, Features f,
-                Boolean lenient)
+                Boolean lenient, int radix)
         {
             _pattern = (p == null) ? "" : p;
             _shape = (sh == null) ? Shape.ANY : sh;
@@ -572,6 +629,17 @@ public @interface JsonFormat
             _timezoneStr = tzStr;
             _features = (f == null) ? Features.empty() : f;
             _lenient = lenient;
+            _radix = radix;
+        }
+
+        /**
+         * @since 2.9
+         */
+        @Deprecated //since 2.21
+        public Value(String p, Shape sh, Locale l, String tzStr, TimeZone tz, Features f,
+                Boolean lenient)
+        {
+            this(p, sh, l, tzStr, tz, f, lenient, DEFAULT_RADIX);
         }
 
         /**
@@ -651,6 +719,10 @@ public @interface JsonFormat
             if (lenient == null) {
                 lenient = _lenient;
             }
+            int radix = overrides._radix;
+            if(radix == DEFAULT_RADIX) {
+                radix = _radix;
+            }
 
             // timezone not merged, just choose one
             String tzStr = overrides._timezoneStr;
@@ -662,21 +734,21 @@ public @interface JsonFormat
             } else {
                 tz = overrides._timezone;
             }
-            return new Value(p, sh, l, tzStr, tz, f, lenient);
+            return new Value(p, sh, l, tzStr, tz, f, lenient, radix);
         }
 
         /**
          * @since 2.6
          */
         public static Value forPattern(String p) {
-            return new Value(p, null, null, null, null, Features.empty(), null);
+            return new Value(p, null, null, null, null, Features.empty(), null, DEFAULT_RADIX);
         }
 
         /**
          * @since 2.7
          */
         public static Value forShape(Shape sh) {
-            return new Value("", sh, null, null, null, Features.empty(), null);
+            return new Value("", sh, null, null, null, Features.empty(), null, DEFAULT_RADIX);
         }
 
         /**
@@ -684,7 +756,15 @@ public @interface JsonFormat
          */
         public static Value forLeniency(boolean lenient) {
             return new Value("", null, null, null, null, Features.empty(),
-                    Boolean.valueOf(lenient));
+                    Boolean.valueOf(lenient), DEFAULT_RADIX);
+        }
+
+        /**
+        * @since 2.21
+        */
+        public static Value forRadix(int radix) {
+            return new Value("", null, null, null, null, Features.empty(),
+                    null, radix);
         }
 
         /**
@@ -692,7 +772,7 @@ public @interface JsonFormat
          */
         public Value withPattern(String p) {
             return new Value(p, _shape, _locale, _timezoneStr, _timezone,
-                    _features, _lenient);
+                    _features, _lenient, _radix);
         }
 
         /**
@@ -703,7 +783,7 @@ public @interface JsonFormat
                 return this;
             }
             return new Value(_pattern, s, _locale, _timezoneStr, _timezone,
-                    _features, _lenient);
+                    _features, _lenient, _radix);
         }
 
         /**
@@ -711,7 +791,7 @@ public @interface JsonFormat
          */
         public Value withLocale(Locale l) {
             return new Value(_pattern, _shape, l, _timezoneStr, _timezone,
-                    _features, _lenient);
+                    _features, _lenient, _radix);
         }
 
         /**
@@ -730,7 +810,18 @@ public @interface JsonFormat
                 return this;
             }
             return new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                    _features, lenient);
+                    _features, lenient, _radix);
+        }
+
+        /**
+         * @since 2.21
+         */
+        public Value withRadix(int radix) {
+            if (radix == _radix) {
+                return this;
+            }
+            return new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
+                    _features, _lenient, radix);
         }
 
         /**
@@ -740,7 +831,7 @@ public @interface JsonFormat
             Features newFeats = _features.with(f);
             return (newFeats == _features) ? this :
                 new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                        newFeats, _lenient);
+                        newFeats, _lenient, _radix);
         }
 
         /**
@@ -750,7 +841,7 @@ public @interface JsonFormat
             Features newFeats = _features.without(f);
             return (newFeats == _features) ? this :
                 new Value(_pattern, _shape, _locale, _timezoneStr, _timezone,
-                        newFeats, _lenient);
+                        newFeats, _lenient, _radix);
         }
 
         @Override
@@ -772,6 +863,13 @@ public @interface JsonFormat
         public Boolean getLenient() {
             return _lenient;
         }
+
+        /**
+         * @return radix to use for serializing subclasses of {@link Number} as strings.
+         * If set to -1, a custom radix has not been specified.
+         * @since 2.21
+         */
+        public int getRadix() { return _radix; }
 
         /**
          * Convenience method equivalent to
@@ -849,6 +947,15 @@ public @interface JsonFormat
         }
 
         /**
+         * Accessor for checking whether non-default radix has been specified.
+         *
+         * @since 2.21
+         */
+        public boolean hasNonDefaultRadix() {
+            return _radix != DEFAULT_RADIX;
+        }
+
+        /**
          * Accessor for checking whether this format value has specific setting for
          * given feature. Result is 3-valued with either `null`, {@link Boolean#TRUE} or
          * {@link Boolean#FALSE}, indicating 'yes/no/dunno' choices, where `null` ("dunno")
@@ -872,8 +979,8 @@ public @interface JsonFormat
 
         @Override
         public String toString() {
-            return String.format("JsonFormat.Value(pattern=%s,shape=%s,lenient=%s,locale=%s,timezone=%s,features=%s)",
-                    _pattern, _shape, _lenient, _locale, _timezoneStr, _features);
+            return String.format("JsonFormat.Value(pattern=%s,shape=%s,lenient=%s,locale=%s,timezone=%s,features=%s,radix=%s)",
+                    _pattern, _shape, _lenient, _locale, _timezoneStr, _features, _radix);
         }
 
         @Override
@@ -908,7 +1015,8 @@ public @interface JsonFormat
                     && Objects.equals(_timezoneStr, other._timezoneStr)
                     && Objects.equals(_pattern, other._pattern)
                     && Objects.equals(_timezone, other._timezone)
-                    && Objects.equals(_locale, other._locale);
+                    && Objects.equals(_locale, other._locale)
+                    && Objects.equals(_radix, other._radix);
         }
     }
 }

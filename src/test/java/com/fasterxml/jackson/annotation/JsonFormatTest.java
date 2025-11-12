@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import org.junit.jupiter.api.Test;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.DEFAULT_RADIX;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +31,7 @@ public class JsonFormatTest
         assertFalse(empty.hasShape());
         assertFalse(empty.hasTimeZone());
         assertFalse(empty.hasLenient());
+        assertFalse(empty.hasNonDefaultRadix());
 
         assertFalse(empty.isLenient());
     }
@@ -63,9 +65,9 @@ public class JsonFormatTest
 
     @Test
     public void testToString() {
-        assertEquals("JsonFormat.Value(pattern=,shape=STRING,lenient=null,locale=null,timezone=null,features=EMPTY)",
+        assertEquals("JsonFormat.Value(pattern=,shape=STRING,lenient=null,locale=null,timezone=null,features=EMPTY,radix=-1)",
                 JsonFormat.Value.forShape(JsonFormat.Shape.STRING).toString());
-        assertEquals("JsonFormat.Value(pattern=[.],shape=ANY,lenient=null,locale=null,timezone=null,features=EMPTY)",
+        assertEquals("JsonFormat.Value(pattern=[.],shape=ANY,lenient=null,locale=null,timezone=null,features=EMPTY,radix=-1)",
                 JsonFormat.Value.forPattern("[.]").toString());
     }
 
@@ -259,5 +261,27 @@ public class JsonFormatTest
         });
         assertEquals(Boolean.FALSE, f4.get(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY));
         assertEquals(Boolean.TRUE, f4.get(Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS));
+    }
+
+    @Test
+    void testRadix() {
+        //Non-Default radix overrides the default
+        int binaryRadix = 2;
+        final JsonFormat.Value v = JsonFormat.Value.forRadix(binaryRadix);
+        JsonFormat.Value merged = EMPTY.withOverrides(v);
+        assertEquals(DEFAULT_RADIX, EMPTY.getRadix());
+        assertEquals(binaryRadix, merged.getRadix());
+
+        //Default does not override
+        final JsonFormat.Value v2 = JsonFormat.Value.forRadix(binaryRadix);
+        merged = v2.withOverrides(EMPTY);
+        assertEquals(binaryRadix, v2.getRadix());
+        assertEquals(binaryRadix, merged.getRadix());
+
+        JsonFormat.Value emptyWithBinaryRadix = EMPTY.withRadix(binaryRadix);
+        assertEquals(binaryRadix, emptyWithBinaryRadix.getRadix());
+
+        JsonFormat.Value forBinaryRadix = JsonFormat.Value.forRadix(binaryRadix);
+        assertEquals(binaryRadix, forBinaryRadix.getRadix());
     }
 }
