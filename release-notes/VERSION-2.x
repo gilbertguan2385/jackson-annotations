@@ -22,6 +22,7 @@ NOTE: Jackson 3.x components rely on 2.x annotations; there are no separate
  (requested by @tiger9800)
 #320: Add `radix` property to `@JsonFormat` annotation
  (contributed by @tiger9800)
+- Fix SBOM generation, publishing
 
 2.20 (28-Aug-2025)
 

@@ -79,13 +79,21 @@
 	     2.x does not extend it so...
         -->
       <plugin>
-        <groupId>org.cyclonedx</groupId>
-        <artifactId>cyclonedx-maven-plugin</artifactId>
-        <configuration>
-	  <attach>true</attach>
-          <skipNotDeployed>true</skipNotDeployed>
-          <classifier>sbom-cyclonedx</classifier>
-        </configuration>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <configuration>
+            <classifier>sbom-cyclonedx</classifier>
+            <!-- 16-Nov-2025, tatu: Should not skip because new Deploy mechanism
+                   `central-publishing-maven-plugin` NOT consider "deploy" apparently
+              -->
+            <skipNotDeployed>false</skipNotDeployed>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals><goal>makeBom</goal></goals>
+            </execution>
+          </executions>
       </plugin>
 
       <plugin>
