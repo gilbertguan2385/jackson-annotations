@@ -13,24 +13,44 @@ import java.util.TimeZone;
  * of property being annotated (or more specifically, deserializer
  * and serializer being used).
  *<p>
+ * Annotation can be used on Classes (types) as well, for modified default behavior,
+ * possibly overridden by per-property annotations.
+ *<p>
  * Common uses include choosing between alternate representations -- for example,
  * whether {@link java.util.Date} is to be serialized as number (Java timestamp)
  * or String (such as ISO-8601 compatible time value) -- as well as configuring
  * exact details with {@link #pattern} property.
  *<p>
  * As of Jackson 2.20, known special handling includes:
+ *<br>(NOTE: list is incomplete)
  *<ul>
- * <li>{@link java.util.Date} or {@link java.util.Calendar}: Shape can be {@link Shape#STRING} or {@link Shape#NUMBER};
- *    pattern may contain {@link java.text.SimpleDateFormat}-compatible pattern definition.
+ * <li>For Date/Time types:
+ * <ul>
+ *   <li>Choice between textual {@code String} representation and numeric
+ *    alternatives (timestamps) with {@code shape} property
+ *    (shape can be {@link Shape#STRING} or {@link Shape#NUMBER}; for some
+ *    types also {@link Shape#ARRAY})
+ *     </li>
+ *   <li>{code timezone} may be used to override either Jackson default (UTC)
+ *      or time-date values timezone
+ *     </li>
+ *   <li>{code lenient} may be used to enable/disable lenient (vs strict) parsing
+ *      of values (default being {@code lenient}
+ *     </li>
+ *   <li>For {@link java.util.Date} or {@link java.util.Calendar}:
+ *    {@code pattern} may specify {@link java.text.SimpleDateFormat}-compatible
+ *    pattern definitions.
  *   </li>
- * <li>{@code java.time.*}: Types in the {@code java.time} package can use
- *    {@link Shape#STRING} for serialization and deserialization. When {@link Shape#STRING}
- *    is used, the pattern property typically follows
- *    {@link java.time.format.DateTimeFormatter}-compatible formatting rules.
- *   </li>
- * <li>Can be used on Classes (types) as well, for modified default behavior, possibly
- *   overridden by per-property annotation
- *   </li>
+ *   <li>For {@code java.time.*} types: 
+ *    {@code pattern} may specify {@link java.time.format.DateTimeFormatter}-compatible
+ *    pattern definitions.
+ *     </li>
+ *   <li>For {@code org.joda.time.*} types
+ *    {@code pattern} may specify Joda's {@code org.joda.time.format.DateTimeFormat}-compatible
+ *    pattern definitions.
+ *     </li>
+ *   </ul>
+ * </li>
  * <li>{@link java.lang.Enum}s: Shapes {@link Shape#STRING} and {@link Shape#NUMBER} can be
  *    used to change between numeric (index) and textual (name or <code>toString()</code>);
  *    but it is also possible to use {@link Shape#OBJECT} to serialize (but not deserialize)
