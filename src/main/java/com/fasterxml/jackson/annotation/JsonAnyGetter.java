@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation that can be used to define a non-static,
- * no-argument method to be an "any getter"; accessor for getting
+ * no-argument {@link java.lang.reflect.Method} (or {@link java.lang.reflect.Field})
+ * to be used as an "any getter"; accessor for getting
  * a set of key/value pairs, to be serialized as part of containing POJO
  * (similar to unwrapping) along with regular property values it has.
  * This typically serves as a counterpart

@@ -41,7 +41,7 @@ import java.util.TimeZone;
  *    {@code pattern} may specify {@link java.text.SimpleDateFormat}-compatible
  *    pattern definitions.
  *   </li>
- *   <li>For {@code java.time.*} types: 
+ *   <li>For {@code java.time.*} types:
  *    {@code pattern} may specify {@link java.time.format.DateTimeFormatter}-compatible
  *    pattern definitions.
  *     </li>
