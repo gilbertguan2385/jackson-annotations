@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * to "any setter" mutators (see {@link JsonAnySetter}).
  * Note that the return type of annotated methods <b>must</b> be
  * {@link java.util.Map}).
+ * "Any properties" will be serialized <b>after</b> regular properties.
  *<p>
  * As with {@link JsonAnySetter}, only one property should be annotated
  * with this annotation; if multiple methods are annotated, an exception
